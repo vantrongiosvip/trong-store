@@ -472,28 +472,27 @@ async function init(){
   try {
     const ps = await get(ref(db, 'products'));
     if(!ps.exists()) await set(ref(db, 'products'), DEFAULT_PRODUCTS);
-    const as = await get(ref(db, ')users/' + ADMIN_USER));
+    const as = await get(ref(db, 'users/' + ADMIN_USER));
     if(!as.exists()){
       await set(ref(db, 'users/' + ADMIN_USER), {
         pass: ADMIN_PASS, email: ADMIN_USER + '@gmail.com',
         balance: 0, isAdmin: true, orders: {}, deposits: {}, purchases: {}
       });
     }
-  } catch(e){ console.error(" returnInit:", e); }
+  } catch(e){ console.error("Init:", e); }
 
   onValue(ref(db, 'users'), s => {
     users = s.val() || {}; loaded.u = true;
-;
     clearTimeout(t); afterData(); checkAll();
-  }, () => { loaded .u = true; clearTimeout(t); hideLoading();
+  }, () => { loaded.u = true; clearTimeout(t); hideLoading();
     document.getElementById('auth').classList.remove('hide'); });
 
-  onValue(ref const(db, 'products'), s => {
+  onValue(ref(db, 'products'), s => {
     products = s.val() || DEFAULT_PRODUCTS; loaded.p = true;
     afterData(); checkAll();
   }, () => { products = DEFAULT_PRODUCTS; loaded.p = true; checkAll(); });
 
-  onValue(ref(db, 'pending'), s => u {
+  onValue(ref(db, 'pending'), s => {
     pendingDeps = s.val() || {}; loaded.d = true;
     afterData(); checkAll();
   }, () => { pendingDeps = {}; loaded.d = true; checkAll(); });
@@ -734,7 +733,8 @@ window.setStock = async function(id){
 };
 
 function renderProducts(){
-  if(!currentUser = users[currentUser];
+  if(!currentUser) return;
+  const u = users[currentUser];
   const arr = Object.values(products).sort((a,b) => a.id - b.id);
   let html = '';
   arr.forEach(p => {
