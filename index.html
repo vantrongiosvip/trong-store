@@ -165,7 +165,7 @@ tr:hover td{background:#fafbfd}
   background:var(--white);color:var(--text);font-size:14px;outline:none;font-family:inherit}
 .custom-amount input:focus{border-color:var(--primary)}
 .btn-confirm{width:100%;padding:15px;border:none;border-radius:12px;
-  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:800;font-size:14.5px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:800;font-size:15px;
   cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(34,197,94,.3)}
 .bank-info{font-size:13.5px;color:var(--text);line-height:1.8}
 .bank-info b{color:var(--primary);font-weight:800}
@@ -301,7 +301,7 @@ tr:hover td{background:#fafbfd}
             <a href="https://facebook.com" target="_blank" class="social-btn">📘</a>
             <a href="https://tiktok.com" target="_blank" class="social-btn">🎵</a>
             <a href="https://t.me" target="_blank" class="social-btn">✈️</a>
-            <a href="https://zalo.me/0355757211" target="_blank" class="social-btn">💬</a>
+            <a href="https://zalo.me" target="_blank" class="social-btn">💬</a>
           </div>
           <div class="video-frame">
             <div class="video-head"><div class="icon">▶</div><h3>VIDEO GIỚI THIỆU</h3></div>
@@ -324,7 +324,6 @@ tr:hover td{background:#fafbfd}
           </div>
           <div class="bank-info">
             <div class="row"><span>Chủ TK</span><b id="bankName">TRỌNG STORE</b></div>
-            <div class="row"><span>SĐT</span><b>0355757211</b></div>
             <div class="row"><span>Nội dung</span><b id="ckContent">NAP user</b></div>
           </div>
         </div>
@@ -339,10 +338,7 @@ tr:hover td{background:#fafbfd}
             <button onclick="pickAmount(1000000,this)">1TR</button>
           </div>
           <div class="custom-amount"><input id="customAmt" type="number" placeholder="Hoặc nhập số tiền tùy chọn..." min="10000"></div>
-          <button class="btn-confirm" onclick="confirmDeposit()">📤 Tôi đã chuyển khoản</button>
-          <div class="qr-note" style="margin-top:14px;text-align:center;color:#d97706;font-weight:600">
-            ⏳ Sau khi gửi, chờ admin duyệt — tiền sẽ được cộng vào ví.
-          </div>
+          <button class="btn-confirm" onclick="confirmDeposit()">💰 NẠP TIỀN</button>
         </div>
       </div>
     </div>
@@ -410,9 +406,7 @@ let fbApp, db;
 try {
   fbApp = initializeApp(firebaseConfig);
   db = getDatabase(fbApp);
-} catch(e) {
-  console.error("Firebase init error:", e);
-}
+} catch(e) { console.error("Firebase init:", e); }
 
 const ADMIN_USER = "vantrongios";
 const ADMIN_PASS = "vantrongios123";
@@ -438,7 +432,7 @@ let currentUser = null;
 let users = {};
 let products = {};
 let pendingDeps = {};
-let dataLoaded = {users:false, products:false, pending:false};
+let loaded = {u:false, p:false, d:false};
 
 function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
 function isAdmin(){ return currentUser === ADMIN_USER; }
@@ -455,14 +449,11 @@ function hideLoading(){
   if(el) el.classList.add('hide');
 }
 
-function checkAllLoaded(){
-  if(dataLoaded.users && dataLoaded.products && dataLoaded.pending){
+function checkAll(){
+  if(loaded.u && loaded.p && loaded.d){
     hideLoading();
-    if(currentUser && users[currentUser]){
-      showApp();
-    } else {
-      document.getElementById('auth').classList.remove('hide');
-    }
+    if(currentUser && users[currentUser]) showApp();
+    else document.getElementById('auth').classList.remove('hide');
   }
 }
 
@@ -470,83 +461,51 @@ async function init(){
   if(!db){
     hideLoading();
     document.getElementById('auth').classList.remove('hide');
-    toast('Lỗi Firebase - kiểm tra lại config','err');
     return;
   }
 
-  // Timeout 6 giây phòng mạng chậm
-  const timeout = setTimeout(() => {
+  const t = setTimeout(() => {
     hideLoading();
     document.getElementById('auth').classList.remove('hide');
-    if(!dataLoaded.users) toast('Kết nối chậm, thử F5 lại','err');
   }, 6000);
 
   try {
-    // Khởi tạo sản phẩm mặc định
-    const prodSnap = await get(ref(db, 'products'));
-    if(!prodSnap.exists()){
-      await set(ref(db, 'products'), DEFAULT_PRODUCTS);
-    }
-
-    // Khởi tạo admin
-    const adminSnap = await get(ref(db, 'users/' + ADMIN_USER));
-    if(!adminSnap.exists()){
+    const ps = await get(ref(db, 'products'));
+    if(!ps.exists()) await set(ref(db, 'products'), DEFAULT_PRODUCTS);
+    const as = await get(ref(db, ')users/' + ADMIN_USER));
+    if(!as.exists()){
       await set(ref(db, 'users/' + ADMIN_USER), {
         pass: ADMIN_PASS, email: ADMIN_USER + '@gmail.com',
         balance: 0, isAdmin: true, orders: {}, deposits: {}, purchases: {}
       });
     }
-  } catch(e){
-    console.error("Init error:", e);
-    // Vẫn tiếp tục, không chặn app
-  }
+  } catch(e){ console.error(" returnInit:", e); }
 
-  // Lắng nghe realtime
-  onValue(ref(db, 'users'), snap => {
-    users = snap.val() || {};
-    dataLoaded.users = true;
-    clearTimeout(timeout);
-    afterData();
-    checkAllLoaded();
-  }, err => {
-    console.error("users load error:", err);
-    dataLoaded.users = true;
-    clearTimeout(timeout);
-    hideLoading();
-    document.getElementById('auth').classList.remove('hide');
-  });
+  onValue(ref(db, 'users'), s => {
+    users = s.val() || {}; loaded.u = true;
+;
+    clearTimeout(t); afterData(); checkAll();
+  }, () => { loaded .u = true; clearTimeout(t); hideLoading();
+    document.getElementById('auth').classList.remove('hide'); });
 
-  onValue(ref(db, 'products'), snap => {
-    products = snap.val() || DEFAULT_PRODUCTS;
-    dataLoaded.products = true;
-    afterData();
-    checkAllLoaded();
-  }, err => {
-    products = DEFAULT_PRODUCTS;
-    dataLoaded.products = true;
-    checkAllLoaded();
-  });
+  onValue(ref const(db, 'products'), s => {
+    products = s.val() || DEFAULT_PRODUCTS; loaded.p = true;
+    afterData(); checkAll();
+  }, () => { products = DEFAULT_PRODUCTS; loaded.p = true; checkAll(); });
 
-  onValue(ref(db, 'pending'), snap => {
-    pendingDeps = snap.val() || {};
-    dataLoaded.pending = true;
-    afterData();
-    checkAllLoaded();
-  }, err => {
-    pendingDeps = {};
-    dataLoaded.pending = true;
-    checkAllLoaded();
-  });
+  onValue(ref(db, 'pending'), s => u {
+    pendingDeps = s.val() || {}; loaded.d = true;
+    afterData(); checkAll();
+  }, () => { pendingDeps = {}; loaded.d = true; checkAll(); });
 
-  // Khôi phục session
   const saved = localStorage.getItem('shop_session');
   if(saved) currentUser = saved;
 }
 
 function afterData(){
   if(currentUser && users[currentUser]){
-    const balEl = document.getElementById('balDisplay');
-    if(balEl) balEl.textContent = money(users[currentUser].balance);
+    const b = document.getElementById('balDisplay');
+    if(b) b.textContent = money(users[currentUser].balance);
     renderProducts(); renderOrders(); renderDep(); renderBuy();
     if(isAdmin()) renderAdmin();
   }
@@ -554,34 +513,32 @@ function afterData(){
 }
 
 window.switchAuth = function(m){
-  const isLogin = m === 'login';
-  document.getElementById('tbLogin').classList.toggle('on', isLogin);
-  document.getElementById('tbReg').classList.toggle('on', !isLogin);
-  document.getElementById('formLogin').style.display = isLogin ? 'block' : 'none';
-  document.getElementById('formReg').style.display = isLogin ? 'none' : 'block';
+  const L = m === 'login';
+  document.getElementById('tbLogin').classList.toggle('on', L);
+  document.getElementById('tbReg').classList.toggle('on', !L);
+  document.getElementById('formLogin').style.display = L ? 'block' : 'none';
+  document.getElementById('formReg').style.display = L ? 'none' : 'block';
 };
 
-function isValidGmail(e){ return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(e); }
+function isGmail(e){ return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(e); }
 function normU(u){ return u.trim().toLowerCase(); }
 
 window.doLogin = async function(){
   const u = normU(document.getElementById('lu').value);
   const p = document.getElementById('lp').value.trim();
   if(!u || !p) return toast('Nhập đầy đủ thông tin!','err');
-  const btn = document.getElementById('btnLogin');
-  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  const b = document.getElementById('btnLogin');
+  b.disabled = true; b.textContent = 'Đang kiểm tra...';
   try {
-    const snap = await get(ref(db, 'users/' + u));
-    if(!snap.exists()){ toast('Tài khoản không tồn tại!','err'); }
-    else if(snap.val().pass !== p){ toast('Sai mật khẩu!','err'); }
+    const s = await get(ref(db, 'users/' + u));
+    if(!s.exists()) toast('Tài khoản không tồn tại!','err');
+    else if(s.val().pass !== p) toast('Sai mật khẩu!','err');
     else {
-      currentUser = u;
-      localStorage.setItem('shop_session', u);
-      showApp();
-      toast('Chào mừng ' + u + ' 🎉','ok');
+      currentUser = u; localStorage.setItem('shop_session', u);
+      showApp(); toast('Chào mừng ' + u + ' 🎉','ok');
     }
   } catch(e){ toast('Lỗi kết nối!','err'); }
-  btn.disabled = false; btn.textContent = 'Đăng nhập ngay →';
+  b.disabled = false; b.textContent = 'Đăng nhập ngay →';
 };
 
 window.doRegister = async function(){
@@ -592,31 +549,28 @@ window.doRegister = async function(){
   if(!u || !e || !p || !p2) return toast('Nhập đầy đủ thông tin!','err');
   if(!/^[a-z0-9_]{3,20}$/.test(u)) return toast('Tên chỉ 3-20 ký tự: a-z, 0-9, _','err');
   if(u === ADMIN_USER) return toast('❌ Tên này đã được bảo vệ!','err');
-  if(!isValidGmail(e)) return toast('❌ Email phải là @gmail.com!','err');
+  if(!isGmail(e)) return toast('❌ Email phải là @gmail.com!','err');
   if(p.length < 6) return toast('Mật khẩu từ 6 ký tự!','err');
   if(p !== p2) return toast('Mật khẩu không khớp!','err');
-
-  const btn = document.getElementById('btnReg');
-  btn.disabled = true; btn.textContent = 'Đang tạo...';
+  const b = document.getElementById('btnReg');
+  b.disabled = true; b.textContent = 'Đang tạo...';
   try {
-    const snap = await get(ref(db, 'users/' + u));
-    if(snap.exists()){ toast('❌ Tên đã tồn tại!','err'); }
+    const s = await get(ref(db, 'users/' + u));
+    if(s.exists()) toast('❌ Tên đã tồn tại!','err');
     else {
       let dup = false;
       for(const k in users){ if(users[k].email === e){ dup = true; break; } }
-      if(dup){ toast('❌ Email đã được dùng!','err'); }
+      if(dup) toast('❌ Email đã được dùng!','err');
       else {
         await set(ref(db, 'users/' + u), {
           pass: p, email: e, balance: 0, orders: {}, deposits: {}, purchases: {}
         });
-        currentUser = u;
-        localStorage.setItem('shop_session', u);
-        showApp();
-        toast('✅ Đăng ký thành công!','ok');
+        currentUser = u; localStorage.setItem('shop_session', u);
+        showApp(); toast('✅ Đăng ký thành công!','ok');
       }
     }
   } catch(err){ toast('Lỗi kết nối!','err'); }
-  btn.disabled = false; btn.textContent = 'Tạo tài khoản →';
+  b.disabled = false; b.textContent = 'Tạo tài khoản →';
 };
 
 window.logout = function(){
@@ -625,8 +579,7 @@ window.logout = function(){
   document.getElementById('auth').classList.remove('hide');
   document.getElementById('app').classList.remove('show');
   ['lu','lp','ru','re','rp','rp2'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
+    const el = document.getElementById(id); if(el) el.value = '';
   });
   switchAuth('login'); tab('home');
 };
@@ -638,14 +591,12 @@ function showApp(){
   document.getElementById('heroAvatar').textContent = currentUser.charAt(0).toUpperCase();
   document.getElementById('balDisplay').textContent = money(users[currentUser] ? users[currentUser].balance : 0);
   document.getElementById('ckContent').textContent = 'NAP ' + currentUser;
-
-  const admin = isAdmin();
-  document.getElementById('adminBadge').style.display = admin ? 'inline-block' : 'none';
-  document.getElementById('btnAdminPanel').style.display = admin ? 'inline-block' : 'none';
-  document.getElementById('navAdmin').style.display = admin ? 'flex' : 'none';
-
+  const a = isAdmin();
+  document.getElementById('adminBadge').style.display = a ? 'inline-block' : 'none';
+  document.getElementById('btnAdminPanel').style.display = a ? 'inline-block' : 'none';
+  document.getElementById('navAdmin').style.display = a ? 'flex' : 'none';
   renderProducts(); renderOrders(); renderDep(); renderBuy();
-  if(admin) renderAdmin();
+  if(a) renderAdmin();
 }
 
 let pickedAmount = 0;
@@ -783,8 +734,7 @@ window.setStock = async function(id){
 };
 
 function renderProducts(){
-  if(!currentUser) return;
-  const u = users[currentUser];
+  if(!currentUser = users[currentUser];
   const arr = Object.values(products).sort((a,b) => a.id - b.id);
   let html = '';
   arr.forEach(p => {
@@ -822,19 +772,19 @@ function renderAdmin(){
   const ap = document.getElementById('adminProductTable');
   if(!ap) return;
   const parr = Object.values(products).sort((a,b) => a.id - b.id);
-  let h2 = '';
+  let h = '';
   parr.forEach(p => {
-    h2 += '<tr>';
-    h2 += '<td>' + (p.img ? '<img src="' + p.img + '" style="width:44px;height:44px;border-radius:8px;object-fit:cover">' : '—') + '</td>';
-    h2 += '<td><b>' + p.name + '</b><br><span style="font-size:11.5px;color:var(--muted)">' + p.tag + '</span></td>';
-    h2 += '<td style="color:var(--accent2);font-weight:800">' + money(p.price) + '</td>';
-    h2 += '<td><b style="color:var(--green);font-size:15px">' + p.stock + '</b></td>';
-    h2 += '<td><input type="number" id="stock_' + p.id + '" value="' + p.stock + '" min="0" style="width:80px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit"> ';
-    h2 += '<button class="btn-approve" onclick="setStock(' + p.id + ')" style="padding:7px 11px">💾 Lưu</button></td>';
-    h2 += '<td><button class="btn-reject" onclick="deleteProduct(' + p.id + ')">🗑️ Xóa</button></td>';
-    h2 += '</tr>';
+    h += '<tr>';
+    h += '<td>' + (p.img ? '<img src="' + p.img + '" style="width:44px;height:44px;border-radius:8px;object-fit:cover">' : '—') + '</td>';
+    h += '<td><b>' + p.name + '</b><br><span style="font-size:11.5px;color:var(--muted)">' + p.tag + '</span></td>';
+    h += '<td style="color:var(--accent2);font-weight:800">' + money(p.price) + '</td>';
+    h += '<td><b style="color:var(--green);font-size:15px">' + p.stock + '</b></td>';
+    h += '<td><input type="number" id="stock_' + p.id + '" value="' + p.stock + '" min="0" style="width:80px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit"> ';
+    h += '<button class="btn-approve" onclick="setStock(' + p.id + ')" style="padding:7px 11px">💾 Lưu</button></td>';
+    h += '<td><button class="btn-reject" onclick="deleteProduct(' + p.id + ')">🗑️ Xóa</button></td>';
+    h += '</tr>';
   });
-  ap.innerHTML = h2 || '<tr><td colspan="6" class="empty">Chưa có sản phẩm nào</td></tr>';
+  ap.innerHTML = h || '<tr><td colspan="6" class="empty">Chưa có sản phẩm nào</td></tr>';
   updatePendingBadge();
 }
 
@@ -843,11 +793,11 @@ function renderOrders(){
   if(!w) return;
   const arr = u.orders ? Object.values(u.orders).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có đơn hàng</div>'; return; }
-  let html = '<table><tr><th>Mã đơn</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày</th><th>Trạng thái</th></tr>';
+  let h = '<table><tr><th>Mã đơn</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày</th><th>Trạng thái</th></tr>';
   arr.forEach(o => {
-    html += '<tr><td>' + o.code + '</td><td>' + o.name + '</td><td>' + money(o.price) + '</td><td>' + o.date + '</td><td><span class="s ok">Hoàn thành</span></td></tr>';
+    h += '<tr><td>' + o.code + '</td><td>' + o.name + '</td><td>' + money(o.price) + '</td><td>' + o.date + '</td><td><span class="s ok">Hoàn thành</span></td></tr>';
   });
-  w.innerHTML = html + '</table>';
+  w.innerHTML = h + '</table>';
 }
 
 function renderDep(){
@@ -855,12 +805,12 @@ function renderDep(){
   if(!w) return;
   const arr = u.deposits ? Object.values(u.deposits).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử nạp</div>'; return; }
-  let html = '<table><tr><th>Mã GD</th><th>Phương thức</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th></tr>';
+  let h = '<table><tr><th>Mã GD</th><th>Phương thức</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th></tr>';
   arr.forEach(d => {
     const txt = d.status === 'ok' ? 'Thành công' : (d.status === 'wait' ? 'Chờ duyệt' : 'Thất bại');
-    html += '<tr><td>' + d.code + '</td><td>' + d.method + '</td><td>+' + money(d.amount) + '</td><td>' + d.time + '</td><td><span class="s ' + d.status + '">' + txt + '</span></td></tr>';
+    h += '<tr><td>' + d.code + '</td><td>' + d.method + '</td><td>+' + money(d.amount) + '</td><td>' + d.time + '</td><td><span class="s ' + d.status + '">' + txt + '</span></td></tr>';
   });
-  w.innerHTML = html + '</table>';
+  w.innerHTML = h + '</table>';
 }
 
 function renderBuy(){
@@ -868,11 +818,11 @@ function renderBuy(){
   if(!w) return;
   const arr = u.purchases ? Object.values(u.purchases).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử mua</div>'; return; }
-  let html = '<table><tr><th>Mã</th><th>Sản phẩm</th><th>Số tiền</th><th>Thời gian</th><th>Key</th></tr>';
+  let h = '<table><tr><th>Mã</th><th>Sản phẩm</th><th>Số tiền</th><th>Thời gian</th><th>Key</th></tr>';
   arr.forEach(p => {
-    html += '<tr><td>' + p.code + '</td><td>' + p.name + '</td><td>' + money(p.price) + '</td><td>' + p.time + '</td><td style="color:var(--gold);font-family:monospace;font-weight:700">' + p.key + '</td></tr>';
+    h += '<tr><td>' + p.code + '</td><td>' + p.name + '</td><td>' + money(p.price) + '</td><td>' + p.time + '</td><td style="color:var(--gold);font-family:monospace;font-weight:700">' + p.key + '</td></tr>';
   });
-  w.innerHTML = html + '</table>';
+  w.innerHTML = h + '</table>';
 }
 
 window.tab = function(n){
@@ -885,8 +835,7 @@ window.tab = function(n){
 
 document.addEventListener('keydown', e => {
   if(e.key !== 'Enter') return;
-  const authEl = document.getElementById('auth');
-  if(authEl.classList.contains('hide')) return;
+  if(document.getElementById('auth').classList.contains('hide')) return;
   if(document.getElementById('formLogin').style.display !== 'none') doLogin();
   else doRegister();
 });
