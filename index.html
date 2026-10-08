@@ -9,7 +9,7 @@
 :root{
   --bg:#f5f7fb;--white:#fff;--border:#e8ecf3;--border2:#dde3ed;
   --text:#1a2230;--muted:#7a8699;--muted2:#a8b0be;
-  --primary:#4a90e2;--primary2:#3d7fd9;--primary-light:#eaf3ff;
+  --primary:#4a90e2;--primary-light:#eaf3ff;
   --accent:#ff6b9d;--accent2:#ff477e;
   --gold:#ffa726;--green:#22c55e;--red:#ef4444;
   --grad:linear-gradient(135deg,#4a90e2,#a78bfa);
@@ -19,8 +19,6 @@
   --shadow-lg:0 12px 40px rgba(30,50,90,.12);
 }
 body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* ===== LOADING ===== */
 #loading{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;
   z-index:9999;flex-direction:column;gap:16px;color:var(--primary)}
 #loading.hide{display:none}
@@ -28,15 +26,12 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
   border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== AUTH ===== */
 #auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;padding:16px;
   background:linear-gradient(135deg,#eaf3ff 0%,#f5f7fb 50%,#ffe9f1 100%);overflow:auto}
 #auth.hide{display:none}
 .auth-box{background:var(--white);border-radius:24px;padding:40px 32px;width:100%;max-width:420px;
   box-shadow:0 24px 60px rgba(74,144,226,.15),0 2px 8px rgba(0,0,0,.04)}
-.auth-logo{text-align:center;font-size:28px;font-weight:900;color:var(--primary);margin-bottom:6px;
-  letter-spacing:-.5px}
-.auth-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-logo{text-align:center;font-size:28px;font-weight:900;color:var(--primary);margin-bottom:6px}
 .auth-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:26px}
 .tabs{display:flex;background:var(--bg);border-radius:12px;padding:5px;margin-bottom:22px}
 .tabs button{flex:1;background:none;border:none;color:var(--muted);padding:11px;border-radius:9px;
@@ -50,122 +45,96 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .btn-main{width:100%;padding:15px;border:none;border-radius:12px;background:var(--grad);color:#fff;
   font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;margin-top:6px;transition:.25s;
   box-shadow:0 6px 20px rgba(74,144,226,.35)}
-.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(74,144,226,.5)}
+.btn-main:hover{transform:translateY(-2px)}
 .btn-main:disabled{background:#c5cdd9;cursor:wait;box-shadow:none;transform:none}
 .auth-note{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
 .auth-note b{color:var(--primary);cursor:pointer;font-weight:700}
 
-/* ===== APP ===== */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.show{display:flex}
 header{background:var(--white);border-bottom:1px solid var(--border);padding:0 22px;height:68px;
   display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
   box-shadow:0 1px 3px rgba(0,0,0,.03)}
-.brand{font-size:20px;font-weight:900;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:9px;
-  letter-spacing:-.3px}
+.brand{font-size:20px;font-weight:900;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:9px}
 .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--green);
   box-shadow:0 0 0 3px rgba(34,197,94,.15)}
-.brand .admin-badge{font-size:10px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;
-  font-weight:800;letter-spacing:.5px}
+.brand .admin-badge{font-size:10px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;font-weight:800}
 .user{display:flex;gap:12px;align-items:center}
 .bal{background:linear-gradient(135deg,#fff5e0,#ffe9c7);border:1.5px solid #ffd88a;
-  padding:8px 16px;border-radius:12px;font-size:13.5px;color:#b7770a;font-weight:800;display:flex;align-items:center;gap:6px}
-.bal::before{content:'💰';font-size:14px}
+  padding:8px 16px;border-radius:12px;font-size:13.5px;color:#b7770a;font-weight:800}
 .avatar{width:40px;height:40px;border-radius:50%;background:var(--grad);
   display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:15px;
   box-shadow:0 4px 12px rgba(74,144,226,.3)}
 .btn-out{background:var(--bg);border:1.5px solid var(--border);color:var(--text);
-  padding:9px 16px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:.2s}
+  padding:9px 16px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit}
 .btn-out:hover{background:#fff0f3;border-color:var(--accent);color:var(--accent)}
 .btn-admin{background:var(--red);border:none;color:#fff;padding:9px 16px;border-radius:11px;
-  cursor:pointer;font-size:13px;font-weight:800;font-family:inherit;transition:.2s}
-.btn-admin:hover{box-shadow:0 6px 16px rgba(239,68,68,.4);transform:translateY(-1px)}
+  cursor:pointer;font-size:13px;font-weight:800;font-family:inherit}
 
 nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 22px;
   overflow-x:auto;scrollbar-width:none;gap:4px}
 nav::-webkit-scrollbar{display:none}
 nav button{background:none;border:none;color:var(--muted);padding:17px 18px;font-size:14px;
-  font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;
-  font-family:inherit;transition:.2s}
-nav button:hover{color:var(--text)}
+  font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
 nav button.on{color:var(--primary);border-bottom-color:var(--primary)}
 
 main{flex:1;padding:26px 22px;max-width:1200px;width:100%;margin:0 auto}
-.tab{display:none;animation:fade .3s ease}
-.tab.on{display:block}
+.tab{display:none}
+.tab.on{display:block;animation:fade .3s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== HERO ===== */
 .hero{position:relative;border-radius:24px;overflow:hidden;margin-bottom:28px;
   background:linear-gradient(135deg,#4a90e2 0%,#6a5cf0 50%,#ff6b9d 100%);
   padding:50px 32px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(74,144,226,.25)}
-.hero::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.15),transparent 50%),
-    radial-gradient(circle at 80% 80%,rgba(255,255,255,.1),transparent 50%)}
 .hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px}
 .hero-avatar-wrap{position:relative;width:130px;height:130px;margin-bottom:6px}
 .hero-avatar-ring{position:absolute;inset:-8px;border-radius:50%;
-  background:conic-gradient(from 0deg,#fff,#ffd966,#ff6b9d,#4a90e2,#fff);
-  animation:spin 8s linear infinite}
+  background:conic-gradient(from 0deg,#fff,#ffd966,#ff6b9d,#4a90e2,#fff);animation:spin 8s linear infinite}
 .hero-avatar-ring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:#4a90e2}
 .hero-avatar{position:absolute;inset:8px;border-radius:50%;background:#fff;
   display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;
   color:var(--primary);z-index:2}
-.hero-star{position:absolute;font-size:20px;z-index:3;animation:pulse 2s ease-in-out infinite}
-.hero-star.s1{top:0;left:18%}.hero-star.s2{top:8%;right:14%;animation-delay:.4s}
-.hero-star.s3{bottom:6%;left:8%;animation-delay:.8s}.hero-star.s4{bottom:0;right:18%;animation-delay:1.2s}
-@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
 .hero-welcome{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.9}
-.hero-title{font-size:46px;font-weight:900;color:#ffd966;letter-spacing:.5px;line-height:1.1;
-  text-shadow:0 4px 20px rgba(0,0,0,.2)}
+.hero-title{font-size:46px;font-weight:900;color:#ffd966;line-height:1.1;text-shadow:0 4px 20px rgba(0,0,0,.2)}
 .hero-slogan{font-size:14.5px;font-weight:700;opacity:.95;line-height:1.5;max-width:600px}
 .hero-socials{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
 .social-btn{width:56px;height:56px;background:#fff;border-radius:16px;display:flex;align-items:center;
-  justify-content:center;font-size:26px;text-decoration:none;transition:.25s;
-  box-shadow:0 6px 20px rgba(0,0,0,.15)}
-.social-btn:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+  justify-content:center;font-size:26px;text-decoration:none;transition:.25s;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.social-btn:hover{transform:translateY(-5px)}
 .video-frame{margin-top:22px;width:100%;max-width:560px;background:rgba(255,255,255,.15);
-  backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:14px}
+  border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:14px}
 .video-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:0 4px}
 .video-head .icon{width:34px;height:34px;background:var(--red);border-radius:10px;display:flex;
   align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900}
-.video-head h3{font-size:14px;font-weight:800;color:#fff;letter-spacing:.3px}
+.video-head h3{font-size:14px;font-weight:800;color:#fff}
 .video-body{background:rgba(0,0,0,.4);border-radius:12px;aspect-ratio:16/9;display:flex;
-  align-items:center;justify-content:center;overflow:hidden}
+  align-items:center;justify-content:center}
 .video-placeholder{color:rgba(255,255,255,.7);font-size:13px;text-align:center;padding:20px}
-.video-placeholder .play{font-size:42px;margin-bottom:8px;opacity:.9}
+.video-placeholder .play{font-size:42px;margin-bottom:8px}
 
-/* ===== SẢN PHẨM ===== */
-h2.title{font-size:20px;font-weight:800;margin-bottom:20px;color:var(--text);
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h2.title{font-size:20px;font-weight:800;margin-bottom:20px;color:var(--text);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 h2.title::before{content:'';width:5px;height:24px;background:var(--grad);border-radius:3px}
 h2.title span{font-size:13px;color:var(--muted);font-weight:500}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
 .card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;
-  display:flex;flex-direction:column;transition:.3s cubic-bezier(.2,.9,.3,1);
-  box-shadow:var(--shadow-sm)}
-.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
+  display:flex;flex-direction:column;transition:.3s;box-shadow:var(--shadow-sm)}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
 .card img{width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:14px;background:var(--bg)}
 .card .tag{align-self:flex-start;font-size:11px;font-weight:800;padding:5px 11px;border-radius:20px;
-  background:var(--primary-light);color:var(--primary);margin-bottom:10px;letter-spacing:.4px}
+  background:var(--primary-light);color:var(--primary);margin-bottom:10px}
 .card h3{font-size:15.5px;margin-bottom:8px;font-weight:800;color:var(--text);line-height:1.35}
 .card p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;flex:1}
 .card .price{font-size:22px;font-weight:900;background:var(--grad-pink);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
-.card .stock{font-size:12px;color:var(--green);margin-top:6px;font-weight:700;display:flex;align-items:center;gap:5px}
-.card .stock::before{content:'●';font-size:8px}
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.card .stock{font-size:12px;color:var(--green);margin-top:6px;font-weight:700}
 .card .stock.low{color:var(--gold)}.card .stock.out{color:var(--red)}
 .card .buy{margin-top:14px;width:100%;padding:12px;border:none;border-radius:11px;
-  background:var(--grad);color:#fff;font-weight:800;font-size:14px;cursor:pointer;
-  font-family:inherit;transition:.25s;box-shadow:0 4px 12px rgba(74,144,226,.25)}
-.card .buy:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,144,226,.45)}
-.card .buy:disabled{background:#e8ecf3;color:var(--muted2);cursor:not-allowed;box-shadow:none;transform:none}
+  background:var(--grad);color:#fff;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
+.card .buy:disabled{background:#e8ecf3;color:var(--muted2);cursor:not-allowed}
 .card .buy:disabled::after{content:' — Không đủ tiền';font-weight:500;font-size:11.5px}
 
-/* ===== BẢNG ===== */
-.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;
-  overflow:auto;box-shadow:var(--shadow-sm)}
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:auto;box-shadow:var(--shadow-sm)}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:600px}
 th{background:var(--bg);padding:14px 18px;text-align:left;color:var(--muted);font-size:11.5px;
   text-transform:uppercase;font-weight:800;letter-spacing:.6px;border-bottom:1px solid var(--border)}
@@ -178,12 +147,9 @@ tr:hover td{background:#fafbfd}
 .empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
 .empty::before{content:'📭';display:block;font-size:48px;margin-bottom:14px;opacity:.5}
 
-/* ===== NẠP TIỀN ===== */
 .dep-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}
-.dep-box{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;
-  box-shadow:var(--shadow-sm)}
-.dep-box h3{font-size:16px;margin-bottom:16px;color:var(--text);font-weight:800;
-  display:flex;align-items:center;gap:8px}
+.dep-box{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow-sm)}
+.dep-box h3{font-size:16px;margin-bottom:16px;color:var(--text);font-weight:800}
 .qr-wrap{text-align:center;padding:18px;background:var(--bg);border-radius:14px;
   border:2px dashed var(--border2);margin-bottom:16px}
 .qr-wrap img{max-width:100%;width:250px;border-radius:12px;background:#fff;padding:6px}
@@ -191,25 +157,22 @@ tr:hover td{background:#fafbfd}
 .amount-options{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
 .amount-options button{flex:1;min-width:76px;padding:13px;border:1.5px solid var(--border);
   background:var(--white);color:var(--text);border-radius:11px;font-weight:800;font-size:13.5px;
-  cursor:pointer;font-family:inherit;transition:.2s}
+  cursor:pointer;font-family:inherit}
 .amount-options button:hover{border-color:var(--primary);color:var(--primary)}
-.amount-options button.on{background:var(--grad);border-color:transparent;color:#fff;
-  box-shadow:0 6px 16px rgba(74,144,226,.35)}
+.amount-options button.on{background:var(--grad);border-color:transparent;color:#fff}
 .custom-amount{margin-bottom:16px}
 .custom-amount input{width:100%;padding:13px 16px;border-radius:11px;border:1.5px solid var(--border);
   background:var(--white);color:var(--text);font-size:14px;outline:none;font-family:inherit}
-.custom-amount input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(74,144,226,.1)}
+.custom-amount input:focus{border-color:var(--primary)}
 .btn-confirm{width:100%;padding:15px;border:none;border-radius:12px;
   background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:800;font-size:14.5px;
-  cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(34,197,94,.3);transition:.25s}
-.btn-confirm:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(34,197,94,.45)}
+  cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(34,197,94,.3)}
 .bank-info{font-size:13.5px;color:var(--text);line-height:1.8}
 .bank-info b{color:var(--primary);font-weight:800}
 .bank-info .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
 .bank-info .row:last-child{border:none}
 .bank-info .row span:first-child{color:var(--muted)}
 
-/* ===== ADMIN ===== */
 .admin-header{background:linear-gradient(135deg,#fff1f2,#ffe4e6);border:1.5px solid #fecdd3;
   border-radius:16px;padding:20px 24px;margin-bottom:22px}
 .admin-header h2{font-size:19px;font-weight:900;color:#be123c}
@@ -217,45 +180,37 @@ tr:hover td{background:#fafbfd}
 .admin-header .warn b{color:#881337}
 .admin-section{background:var(--white);border:1px solid var(--border);border-radius:16px;
   padding:24px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
-.admin-section h3{font-size:16px;font-weight:800;color:var(--primary);margin-bottom:16px;
-  display:flex;align-items:center;gap:8px}
+.admin-section h3{font-size:16px;font-weight:800;color:var(--primary);margin-bottom:16px}
 .admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px}
 .admin-grid input,.admin-grid textarea{width:100%;padding:12px 14px;border-radius:11px;
   border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;
-  outline:none;font-family:inherit;transition:.2s}
+  outline:none;font-family:inherit}
 .admin-grid textarea{grid-column:1/-1;resize:vertical;min-height:70px}
-.admin-grid input:focus,.admin-grid textarea:focus{border-color:var(--primary);background:var(--white);
-  box-shadow:0 0 0 4px rgba(74,144,226,.1)}
+.admin-grid input:focus,.admin-grid textarea:focus{border-color:var(--primary);background:var(--white)}
 .admin-grid input::placeholder,.admin-grid textarea::placeholder{color:var(--muted2)}
 .admin-grid .full{grid-column:1/-1}
 .upload-box{grid-column:1/-1;background:var(--bg);border:2px dashed var(--border2);border-radius:12px;
-  padding:20px;text-align:center;cursor:pointer;transition:.25s;display:block}
+  padding:20px;text-align:center;cursor:pointer;display:block}
 .upload-box:hover{border-color:var(--primary);background:var(--primary-light)}
 .upload-box input[type=file]{display:none}
 .upload-box .up-icon{font-size:30px;margin-bottom:8px}
 .upload-box .up-txt{font-size:13.5px;color:var(--muted)}
 .upload-box .up-txt b{color:var(--primary)}
 .img-preview{grid-column:1/-1;text-align:center}
-.img-preview img{max-width:170px;max-height:170px;border-radius:12px;border:1px solid var(--border);
-  display:none;box-shadow:var(--shadow-sm)}
+.img-preview img{max-width:170px;max-height:170px;border-radius:12px;border:1px solid var(--border);display:none}
 .btn-add{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:13px 26px;border:none;
-  border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;
-  box-shadow:0 4px 14px rgba(34,197,94,.3);transition:.25s}
-.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(34,197,94,.45)}
+  border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
 .btn-approve{background:#22c55e;color:#fff;padding:7px 14px;border:none;border-radius:9px;
-  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;margin-right:5px;transition:.2s}
-.btn-approve:hover{background:#16a34a}
+  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;margin-right:5px}
 .btn-reject{background:var(--red);color:#fff;padding:7px 14px;border:none;border-radius:9px;
-  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;transition:.2s}
-.btn-reject:hover{background:#dc2626}
+  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit}
 .pending-badge{display:inline-block;background:var(--red);color:#fff;font-size:11.5px;font-weight:800;
   padding:3px 9px;border-radius:9px;margin-left:6px}
 
-/* ===== TOAST ===== */
 #toast{position:fixed;bottom:24px;right:24px;background:var(--white);border-left:4px solid var(--primary);
   padding:16px 20px;border-radius:12px;color:var(--text);font-size:14px;font-weight:600;
-  z-index:9999;transform:translateY(150%);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
-  max-width:340px;box-shadow:0 12px 40px rgba(30,50,90,.18)}
+  z-index:9999;transform:translateY(150%);transition:transform .35s;max-width:340px;
+  box-shadow:0 12px 40px rgba(30,50,90,.18)}
 #toast.show{transform:translateY(0)}
 #toast.ok{border-left-color:var(--green)}
 #toast.err{border-left-color:var(--red)}
@@ -264,9 +219,9 @@ tr:hover td{background:#fafbfd}
 @media(max-width:768px){
   header{padding:0 14px}.bal{display:none}.brand{font-size:16px}
   main{padding:18px 14px}nav{padding:0 14px}
-  .hero{padding:36px 20px;border-radius:20px}.hero-title{font-size:32px}
+  .hero{padding:36px 20px}.hero-title{font-size:32px}
   .hero-avatar-wrap{width:110px;height:110px}.hero-avatar{font-size:38px}
-  .social-btn{width:48px;height:48px;font-size:22px;border-radius:14px}
+  .social-btn{width:48px;height:48px;font-size:22px}
   h2.title{font-size:17px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
   .card{padding:14px}.card h3{font-size:14px}.card .price{font-size:18px}.card img{height:120px}
@@ -280,9 +235,9 @@ tr:hover td{background:#fafbfd}
 <div id="loading"><div class="spinner"></div><div>Đang kết nối...</div></div>
 <div id="toast"></div>
 
-<div id="auth">
+<div id="auth" class="hide">
   <div class="auth-box">
-    <div class="auth-logo"><span id="authLogo">TRỌNG STORE</span></div>
+    <div class="auth-logo" id="authLogo">TRỌNG STORE</div>
     <div class="auth-sub">Proxy game chuyên dụng • Giao key tức thì</div>
     <div class="tabs">
       <button id="tbLogin" class="on" onclick="switchAuth('login')">Đăng nhập</button>
@@ -335,8 +290,6 @@ tr:hover td{background:#fafbfd}
           <div class="hero-avatar-wrap">
             <div class="hero-avatar-ring"></div>
             <div class="hero-avatar" id="heroAvatar">S</div>
-            <div class="hero-star s1">✨</div><div class="hero-star s2">⭐</div>
-            <div class="hero-star s3">💫</div><div class="hero-star s4">✨</div>
           </div>
           <div class="hero-welcome">Welcome to</div>
           <div class="hero-title" id="heroTitle">Trọng Store</div>
@@ -453,8 +406,13 @@ const firebaseConfig = {
   appId: "1:444772818915:web:7b630136bb26bb0a374ad6"
 };
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getDatabase(fbApp);
+let fbApp, db;
+try {
+  fbApp = initializeApp(firebaseConfig);
+  db = getDatabase(fbApp);
+} catch(e) {
+  console.error("Firebase init error:", e);
+}
 
 const ADMIN_USER = "vantrongios";
 const ADMIN_PASS = "vantrongios123";
@@ -462,12 +420,12 @@ const SHOP_NAME = "TRỌNG STORE";
 const BANK_NAME = "TRỌNG STORE";
 const QR_IMAGE = "https://files.catbox.moe/oi1pi7.jpeg";
 
-const DEFAULT_PRODUCTS = [
-  {id:1,tag:'PHỔ BIẾN',name:'Proxy Game 1 Ngày',desc:'Proxy chuyên dụng, kết nối ổn định, hỗ trợ kéo tâm.',price:20000,stock:999,img:'',link:''},
-  {id:2,tag:'TIẾT KIỆM',name:'Proxy Game 7 Ngày',desc:'Gói tuần tiết kiệm, giao key tức thì, hỗ trợ 24/7.',price:100000,stock:500,img:'',link:''},
-  {id:3,tag:'VIP',name:'Proxy Game 30 Ngày',desc:'Gói tháng VIP, hạ tầng chuyên dụng, bảo hành full.',price:350000,stock:200,img:'',link:''},
-  {id:4,tag:'TRỌN ĐỜI',name:'Key VIP Trọn Đời',desc:'Không giới hạn, ưu tiên hỗ trợ, kết nối full.',price:1200000,stock:50,img:'',link:''}
-];
+const DEFAULT_PRODUCTS = {
+  1: {id:1,tag:'PHỔ BIẾN',name:'Proxy Game 1 Ngày',desc:'Proxy chuyên dụng, kết nối ổn định, hỗ trợ kéo tâm.',price:20000,stock:999,img:'',link:''},
+  2: {id:2,tag:'TIẾT KIỆM',name:'Proxy Game 7 Ngày',desc:'Gói tuần tiết kiệm, giao key tức thì, hỗ trợ 24/7.',price:100000,stock:500,img:'',link:''},
+  3: {id:3,tag:'VIP',name:'Proxy Game 30 Ngày',desc:'Gói tháng VIP, hạ tầng chuyên dụng, bảo hành full.',price:350000,stock:200,img:'',link:''},
+  4: {id:4,tag:'TRỌN ĐỜI',name:'Key VIP Trọn Đời',desc:'Không giới hạn, ưu tiên hỗ trợ, kết nối full.',price:1200000,stock:50,img:'',link:''}
+};
 
 document.title = SHOP_NAME;
 document.getElementById('brandName').textContent = SHOP_NAME;
@@ -480,6 +438,7 @@ let currentUser = null;
 let users = {};
 let products = {};
 let pendingDeps = {};
+let dataLoaded = {users:false, products:false, pending:false};
 
 function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
 function isAdmin(){ return currentUser === ADMIN_USER; }
@@ -491,34 +450,103 @@ function toast(msg, type){
   clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+function hideLoading(){
+  const el = document.getElementById('loading');
+  if(el) el.classList.add('hide');
+}
+
+function checkAllLoaded(){
+  if(dataLoaded.users && dataLoaded.products && dataLoaded.pending){
+    hideLoading();
+    if(currentUser && users[currentUser]){
+      showApp();
+    } else {
+      document.getElementById('auth').classList.remove('hide');
+    }
+  }
+}
+
 async function init(){
-  const prodSnap = await get(ref(db, 'products'));
-  if(!prodSnap.exists()){
-    const obj = {};
-    DEFAULT_PRODUCTS.forEach(p => { obj[p.id] = p; });
-    await set(ref(db, 'products'), obj);
-  }
-  const adminSnap = await get(ref(db, 'users/' + ADMIN_USER));
-  if(!adminSnap.exists()){
-    await set(ref(db, 'users/' + ADMIN_USER), {
-      pass: ADMIN_PASS, email: ADMIN_USER + '@gmail.com',
-      balance: 0, isAdmin: true, orders: {}, deposits: {}, purchases: {}
-    });
+  if(!db){
+    hideLoading();
+    document.getElementById('auth').classList.remove('hide');
+    toast('Lỗi Firebase - kiểm tra lại config','err');
+    return;
   }
 
-  onValue(ref(db, 'users'), snap => { users = snap.val() || {}; afterData(); });
-  onValue(ref(db, 'products'), snap => { products = snap.val() || {}; afterData(); });
-  onValue(ref(db, 'pending'), snap => { pendingDeps = snap.val() || {}; afterData(); });
+  // Timeout 6 giây phòng mạng chậm
+  const timeout = setTimeout(() => {
+    hideLoading();
+    document.getElementById('auth').classList.remove('hide');
+    if(!dataLoaded.users) toast('Kết nối chậm, thử F5 lại','err');
+  }, 6000);
 
+  try {
+    // Khởi tạo sản phẩm mặc định
+    const prodSnap = await get(ref(db, 'products'));
+    if(!prodSnap.exists()){
+      await set(ref(db, 'products'), DEFAULT_PRODUCTS);
+    }
+
+    // Khởi tạo admin
+    const adminSnap = await get(ref(db, 'users/' + ADMIN_USER));
+    if(!adminSnap.exists()){
+      await set(ref(db, 'users/' + ADMIN_USER), {
+        pass: ADMIN_PASS, email: ADMIN_USER + '@gmail.com',
+        balance: 0, isAdmin: true, orders: {}, deposits: {}, purchases: {}
+      });
+    }
+  } catch(e){
+    console.error("Init error:", e);
+    // Vẫn tiếp tục, không chặn app
+  }
+
+  // Lắng nghe realtime
+  onValue(ref(db, 'users'), snap => {
+    users = snap.val() || {};
+    dataLoaded.users = true;
+    clearTimeout(timeout);
+    afterData();
+    checkAllLoaded();
+  }, err => {
+    console.error("users load error:", err);
+    dataLoaded.users = true;
+    clearTimeout(timeout);
+    hideLoading();
+    document.getElementById('auth').classList.remove('hide');
+  });
+
+  onValue(ref(db, 'products'), snap => {
+    products = snap.val() || DEFAULT_PRODUCTS;
+    dataLoaded.products = true;
+    afterData();
+    checkAllLoaded();
+  }, err => {
+    products = DEFAULT_PRODUCTS;
+    dataLoaded.products = true;
+    checkAllLoaded();
+  });
+
+  onValue(ref(db, 'pending'), snap => {
+    pendingDeps = snap.val() || {};
+    dataLoaded.pending = true;
+    afterData();
+    checkAllLoaded();
+  }, err => {
+    pendingDeps = {};
+    dataLoaded.pending = true;
+    checkAllLoaded();
+  });
+
+  // Khôi phục session
   const saved = localStorage.getItem('shop_session');
-  if(saved) { currentUser = saved; showApp(); }
-
-  setTimeout(() => document.getElementById('loading').classList.add('hide'), 800);
+  if(saved) currentUser = saved;
 }
 
 function afterData(){
   if(currentUser && users[currentUser]){
-    document.getElementById('balDisplay').textContent = money(users[currentUser].balance);
+    const balEl = document.getElementById('balDisplay');
+    if(balEl) balEl.textContent = money(users[currentUser].balance);
     renderProducts(); renderOrders(); renderDep(); renderBuy();
     if(isAdmin()) renderAdmin();
   }
@@ -596,7 +624,10 @@ window.logout = function(){
   localStorage.removeItem('shop_session');
   document.getElementById('auth').classList.remove('hide');
   document.getElementById('app').classList.remove('show');
-  ['lu','lp','ru','re','rp','rp2'].forEach(id => document.getElementById(id).value = '');
+  ['lu','lp','ru','re','rp','rp2'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
   switchAuth('login'); tab('home');
 };
 
@@ -694,6 +725,7 @@ window.rejectDeposit = async function(code){
 function updatePendingBadge(){
   const n = Object.keys(pendingDeps).length;
   const b = document.getElementById('pendBadge');
+  if(!b) return;
   if(n > 0){ b.style.display = 'inline-block'; b.textContent = n; }
   else b.style.display = 'none';
 }
@@ -726,7 +758,9 @@ window.addProduct = async function(){
     await set(ref(db, 'products/' + (maxId+1)), {
       id:maxId+1, tag, name, desc, price, stock, img:currentImgData, link
     });
-    ['pName','pPrice','pTag','pImgFile','pLink','pDesc'].forEach(x => document.getElementById(x).value = '');
+    ['pName','pPrice','pTag','pImgFile','pLink','pDesc'].forEach(x => {
+      const el = document.getElementById(x); if(el) el.value = '';
+    });
     document.getElementById('pStock').value = '100';
     currentImgData = '';
     document.getElementById('imgPreview').style.display = 'none';
@@ -772,6 +806,7 @@ function renderProducts(){
 
 function renderAdmin(){
   const pw = document.getElementById('pendingWrap');
+  if(!pw) return;
   const arr = Object.values(pendingDeps);
   if(!arr.length){ pw.innerHTML = '<div class="empty">📭 Không có yêu cầu nào đang chờ</div>'; }
   else {
@@ -785,6 +820,7 @@ function renderAdmin(){
     pw.innerHTML = html + '</table>';
   }
   const ap = document.getElementById('adminProductTable');
+  if(!ap) return;
   const parr = Object.values(products).sort((a,b) => a.id - b.id);
   let h2 = '';
   parr.forEach(p => {
@@ -804,6 +840,7 @@ function renderAdmin(){
 
 function renderOrders(){
   const u = users[currentUser], w = document.getElementById('ordersWrap');
+  if(!w) return;
   const arr = u.orders ? Object.values(u.orders).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có đơn hàng</div>'; return; }
   let html = '<table><tr><th>Mã đơn</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày</th><th>Trạng thái</th></tr>';
@@ -815,6 +852,7 @@ function renderOrders(){
 
 function renderDep(){
   const u = users[currentUser], w = document.getElementById('depWrap');
+  if(!w) return;
   const arr = u.deposits ? Object.values(u.deposits).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử nạp</div>'; return; }
   let html = '<table><tr><th>Mã GD</th><th>Phương thức</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th></tr>';
@@ -827,6 +865,7 @@ function renderDep(){
 
 function renderBuy(){
   const u = users[currentUser], w = document.getElementById('buyWrap');
+  if(!w) return;
   const arr = u.purchases ? Object.values(u.purchases).reverse() : [];
   if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử mua</div>'; return; }
   let html = '<table><tr><th>Mã</th><th>Sản phẩm</th><th>Số tiền</th><th>Thời gian</th><th>Key</th></tr>';
@@ -845,7 +884,9 @@ window.tab = function(n){
 };
 
 document.addEventListener('keydown', e => {
-  if(e.key !== 'Enter' || document.getElementById('auth').classList.contains('hide')) return;
+  if(e.key !== 'Enter') return;
+  const authEl = document.getElementById('auth');
+  if(authEl.classList.contains('hide')) return;
   if(document.getElementById('formLogin').style.display !== 'none') doLogin();
   else doRegister();
 });
