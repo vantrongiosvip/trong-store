@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRỌNG STORE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
+:root{
+  --bg:#f5f7fb;--white:#fff;--border:#e8ecf3;--border2:#dde3ed;
+  --text:#1a2230;--muted:#7a8699;--muted2:#a8b0be;
+  --primary:#4a90e2;--primary2:#3d7fd9;--primary-light:#eaf3ff;
+  --accent:#ff6b9d;--accent2:#ff477e;
+  --gold:#ffa726;--green:#22c55e;--red:#ef4444;
+  --grad:linear-gradient(135deg,#4a90e2,#a78bfa);
+  --grad-pink:linear-gradient(135deg,#ff6b9d,#ff477e);
+  --shadow-sm:0 2px 8px rgba(30,50,90,.06);
+  --shadow:0 6px 24px rgba(30,50,90,.08);
+  --shadow-lg:0 12px 40px rgba(30,50,90,.12);
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ===== LOADING ===== */
+#loading{position:fixed;inset:0;background:var(--white);display:flex;align-items:center;justify-content:center;
+  z-index:9999;flex-direction:column;gap:16px;color:var(--primary)}
+#loading.hide{display:none}
+.spinner{width:44px;height:44px;border:4px solid var(--primary-light);border-top-color:var(--primary);
+  border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== AUTH ===== */
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;padding:16px;
+  background:linear-gradient(135deg,#eaf3ff 0%,#f5f7fb 50%,#ffe9f1 100%);overflow:auto}
+#auth.hide{display:none}
+.auth-box{background:var(--white);border-radius:24px;padding:40px 32px;width:100%;max-width:420px;
+  box-shadow:0 24px 60px rgba(74,144,226,.15),0 2px 8px rgba(0,0,0,.04)}
+.auth-logo{text-align:center;font-size:28px;font-weight:900;color:var(--primary);margin-bottom:6px;
+  letter-spacing:-.5px}
+.auth-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:26px}
+.tabs{display:flex;background:var(--bg);border-radius:12px;padding:5px;margin-bottom:22px}
+.tabs button{flex:1;background:none;border:none;color:var(--muted);padding:11px;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
+.tabs button.on{background:var(--white);color:var(--primary);box-shadow:var(--shadow-sm)}
+.field{margin-bottom:14px}
+.field input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--bg);color:var(--text);font-size:14.5px;outline:none;font-family:inherit;transition:.2s}
+.field input:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 4px rgba(74,144,226,.1)}
+.field input::placeholder{color:var(--muted2)}
+.btn-main{width:100%;padding:15px;border:none;border-radius:12px;background:var(--grad);color:#fff;
+  font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;margin-top:6px;transition:.25s;
+  box-shadow:0 6px 20px rgba(74,144,226,.35)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(74,144,226,.5)}
+.btn-main:disabled{background:#c5cdd9;cursor:wait;box-shadow:none;transform:none}
+.auth-note{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
+.auth-note b{color:var(--primary);cursor:pointer;font-weight:700}
+
+/* ===== APP ===== */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.show{display:flex}
+header{background:var(--white);border-bottom:1px solid var(--border);padding:0 22px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 3px rgba(0,0,0,.03)}
+.brand{font-size:20px;font-weight:900;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:9px;
+  letter-spacing:-.3px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.brand .admin-badge{font-size:10px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;
+  font-weight:800;letter-spacing:.5px}
+.user{display:flex;gap:12px;align-items:center}
+.bal{background:linear-gradient(135deg,#fff5e0,#ffe9c7);border:1.5px solid #ffd88a;
+  padding:8px 16px;border-radius:12px;font-size:13.5px;color:#b7770a;font-weight:800;display:flex;align-items:center;gap:6px}
+.bal::before{content:'💰';font-size:14px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:15px;
+  box-shadow:0 4px 12px rgba(74,144,226,.3)}
+.btn-out{background:var(--bg);border:1.5px solid var(--border);color:var(--text);
+  padding:9px 16px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:.2s}
+.btn-out:hover{background:#fff0f3;border-color:var(--accent);color:var(--accent)}
+.btn-admin{background:var(--red);border:none;color:#fff;padding:9px 16px;border-radius:11px;
+  cursor:pointer;font-size:13px;font-weight:800;font-family:inherit;transition:.2s}
+.btn-admin:hover{box-shadow:0 6px 16px rgba(239,68,68,.4);transform:translateY(-1px)}
+
+nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 22px;
+  overflow-x:auto;scrollbar-width:none;gap:4px}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:none;color:var(--muted);padding:17px 18px;font-size:14px;
+  font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;
+  font-family:inherit;transition:.2s}
+nav button:hover{color:var(--text)}
+nav button.on{color:var(--primary);border-bottom-color:var(--primary)}
+
+main{flex:1;padding:26px 22px;max-width:1200px;width:100%;margin:0 auto}
+.tab{display:none;animation:fade .3s ease}
+.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== HERO ===== */
+.hero{position:relative;border-radius:24px;overflow:hidden;margin-bottom:28px;
+  background:linear-gradient(135deg,#4a90e2 0%,#6a5cf0 50%,#ff6b9d 100%);
+  padding:50px 32px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(74,144,226,.25)}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.15),transparent 50%),
+    radial-gradient(circle at 80% 80%,rgba(255,255,255,.1),transparent 50%)}
+.hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px}
+.hero-avatar-wrap{position:relative;width:130px;height:130px;margin-bottom:6px}
+.hero-avatar-ring{position:absolute;inset:-8px;border-radius:50%;
+  background:conic-gradient(from 0deg,#fff,#ffd966,#ff6b9d,#4a90e2,#fff);
+  animation:spin 8s linear infinite}
+.hero-avatar-ring::after{content:'';position:absolute;inset:5px;border-radius:50%;background:#4a90e2}
+.hero-avatar{position:absolute;inset:8px;border-radius:50%;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;
+  color:var(--primary);z-index:2}
+.hero-star{position:absolute;font-size:20px;z-index:3;animation:pulse 2s ease-in-out infinite}
+.hero-star.s1{top:0;left:18%}.hero-star.s2{top:8%;right:14%;animation-delay:.4s}
+.hero-star.s3{bottom:6%;left:8%;animation-delay:.8s}.hero-star.s4{bottom:0;right:18%;animation-delay:1.2s}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+.hero-welcome{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.9}
+.hero-title{font-size:46px;font-weight:900;color:#ffd966;letter-spacing:.5px;line-height:1.1;
+  text-shadow:0 4px 20px rgba(0,0,0,.2)}
+.hero-slogan{font-size:14.5px;font-weight:700;opacity:.95;line-height:1.5;max-width:600px}
+.hero-socials{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.social-btn{width:56px;height:56px;background:#fff;border-radius:16px;display:flex;align-items:center;
+  justify-content:center;font-size:26px;text-decoration:none;transition:.25s;
+  box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.social-btn:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.video-frame{margin-top:22px;width:100%;max-width:560px;background:rgba(255,255,255,.15);
+  backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.3);border-radius:18px;padding:14px}
+.video-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:0 4px}
+.video-head .icon{width:34px;height:34px;background:var(--red);border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:900}
+.video-head h3{font-size:14px;font-weight:800;color:#fff;letter-spacing:.3px}
+.video-body{background:rgba(0,0,0,.4);border-radius:12px;aspect-ratio:16/9;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+.video-placeholder{color:rgba(255,255,255,.7);font-size:13px;text-align:center;padding:20px}
+.video-placeholder .play{font-size:42px;margin-bottom:8px;opacity:.9}
+
+/* ===== SẢN PHẨM ===== */
+h2.title{font-size:20px;font-weight:800;margin-bottom:20px;color:var(--text);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h2.title::before{content:'';width:5px;height:24px;background:var(--grad);border-radius:3px}
+h2.title span{font-size:13px;color:var(--muted);font-weight:500}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;
+  display:flex;flex-direction:column;transition:.3s cubic-bezier(.2,.9,.3,1);
+  box-shadow:var(--shadow-sm)}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:14px;background:var(--bg)}
+.card .tag{align-self:flex-start;font-size:11px;font-weight:800;padding:5px 11px;border-radius:20px;
+  background:var(--primary-light);color:var(--primary);margin-bottom:10px;letter-spacing:.4px}
+.card h3{font-size:15.5px;margin-bottom:8px;font-weight:800;color:var(--text);line-height:1.35}
+.card p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;flex:1}
+.card .price{font-size:22px;font-weight:900;background:var(--grad-pink);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+.card .stock{font-size:12px;color:var(--green);margin-top:6px;font-weight:700;display:flex;align-items:center;gap:5px}
+.card .stock::before{content:'●';font-size:8px}
+.card .stock.low{color:var(--gold)}.card .stock.out{color:var(--red)}
+.card .buy{margin-top:14px;width:100%;padding:12px;border:none;border-radius:11px;
+  background:var(--grad);color:#fff;font-weight:800;font-size:14px;cursor:pointer;
+  font-family:inherit;transition:.25s;box-shadow:0 4px 12px rgba(74,144,226,.25)}
+.card .buy:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,144,226,.45)}
+.card .buy:disabled{background:#e8ecf3;color:var(--muted2);cursor:not-allowed;box-shadow:none;transform:none}
+.card .buy:disabled::after{content:' — Không đủ tiền';font-weight:500;font-size:11.5px}
+
+/* ===== BẢNG ===== */
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;
+  overflow:auto;box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:600px}
+th{background:var(--bg);padding:14px 18px;text-align:left;color:var(--muted);font-size:11.5px;
+  text-transform:uppercase;font-weight:800;letter-spacing:.6px;border-bottom:1px solid var(--border)}
+td{padding:14px 18px;border-top:1px solid var(--border);color:var(--text)}
+tr:hover td{background:#fafbfd}
+.s{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800}
+.ok{background:#dcfce7;color:#16a34a}
+.wait{background:#fef3c7;color:#d97706}
+.fail{background:#fee2e2;color:#dc2626}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.empty::before{content:'📭';display:block;font-size:48px;margin-bottom:14px;opacity:.5}
+
+/* ===== NẠP TIỀN ===== */
+.dep-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}
+.dep-box{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;
+  box-shadow:var(--shadow-sm)}
+.dep-box h3{font-size:16px;margin-bottom:16px;color:var(--text);font-weight:800;
+  display:flex;align-items:center;gap:8px}
+.qr-wrap{text-align:center;padding:18px;background:var(--bg);border-radius:14px;
+  border:2px dashed var(--border2);margin-bottom:16px}
+.qr-wrap img{max-width:100%;width:250px;border-radius:12px;background:#fff;padding:6px}
+.qr-note{font-size:12px;color:var(--muted);margin-top:10px}
+.amount-options{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.amount-options button{flex:1;min-width:76px;padding:13px;border:1.5px solid var(--border);
+  background:var(--white);color:var(--text);border-radius:11px;font-weight:800;font-size:13.5px;
+  cursor:pointer;font-family:inherit;transition:.2s}
+.amount-options button:hover{border-color:var(--primary);color:var(--primary)}
+.amount-options button.on{background:var(--grad);border-color:transparent;color:#fff;
+  box-shadow:0 6px 16px rgba(74,144,226,.35)}
+.custom-amount{margin-bottom:16px}
+.custom-amount input{width:100%;padding:13px 16px;border-radius:11px;border:1.5px solid var(--border);
+  background:var(--white);color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.custom-amount input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(74,144,226,.1)}
+.btn-confirm{width:100%;padding:15px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:800;font-size:14.5px;
+  cursor:pointer;font-family:inherit;box-shadow:0 6px 20px rgba(34,197,94,.3);transition:.25s}
+.btn-confirm:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(34,197,94,.45)}
+.bank-info{font-size:13.5px;color:var(--text);line-height:1.8}
+.bank-info b{color:var(--primary);font-weight:800}
+.bank-info .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.bank-info .row:last-child{border:none}
+.bank-info .row span:first-child{color:var(--muted)}
+
+/* ===== ADMIN ===== */
+.admin-header{background:linear-gradient(135deg,#fff1f2,#ffe4e6);border:1.5px solid #fecdd3;
+  border-radius:16px;padding:20px 24px;margin-bottom:22px}
+.admin-header h2{font-size:19px;font-weight:900;color:#be123c}
+.admin-header .warn{font-size:12.5px;color:#9f1239;margin-top:5px}
+.admin-header .warn b{color:#881337}
+.admin-section{background:var(--white);border:1px solid var(--border);border-radius:16px;
+  padding:24px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.admin-section h3{font-size:16px;font-weight:800;color:var(--primary);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.admin-grid input,.admin-grid textarea{width:100%;padding:12px 14px;border-radius:11px;
+  border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;
+  outline:none;font-family:inherit;transition:.2s}
+.admin-grid textarea{grid-column:1/-1;resize:vertical;min-height:70px}
+.admin-grid input:focus,.admin-grid textarea:focus{border-color:var(--primary);background:var(--white);
+  box-shadow:0 0 0 4px rgba(74,144,226,.1)}
+.admin-grid input::placeholder,.admin-grid textarea::placeholder{color:var(--muted2)}
+.admin-grid .full{grid-column:1/-1}
+.upload-box{grid-column:1/-1;background:var(--bg);border:2px dashed var(--border2);border-radius:12px;
+  padding:20px;text-align:center;cursor:pointer;transition:.25s;display:block}
+.upload-box:hover{border-color:var(--primary);background:var(--primary-light)}
+.upload-box input[type=file]{display:none}
+.upload-box .up-icon{font-size:30px;margin-bottom:8px}
+.upload-box .up-txt{font-size:13.5px;color:var(--muted)}
+.upload-box .up-txt b{color:var(--primary)}
+.img-preview{grid-column:1/-1;text-align:center}
+.img-preview img{max-width:170px;max-height:170px;border-radius:12px;border:1px solid var(--border);
+  display:none;box-shadow:var(--shadow-sm)}
+.btn-add{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:13px 26px;border:none;
+  border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 14px rgba(34,197,94,.3);transition:.25s}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(34,197,94,.45)}
+.btn-approve{background:#22c55e;color:#fff;padding:7px 14px;border:none;border-radius:9px;
+  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;margin-right:5px;transition:.2s}
+.btn-approve:hover{background:#16a34a}
+.btn-reject{background:var(--red);color:#fff;padding:7px 14px;border:none;border-radius:9px;
+  font-weight:800;font-size:12px;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-reject:hover{background:#dc2626}
+.pending-badge{display:inline-block;background:var(--red);color:#fff;font-size:11.5px;font-weight:800;
+  padding:3px 9px;border-radius:9px;margin-left:6px}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--white);border-left:4px solid var(--primary);
+  padding:16px 20px;border-radius:12px;color:var(--text);font-size:14px;font-weight:600;
+  z-index:9999;transform:translateY(150%);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+  max-width:340px;box-shadow:0 12px 40px rgba(30,50,90,.18)}
+#toast.show{transform:translateY(0)}
+#toast.ok{border-left-color:var(--green)}
+#toast.err{border-left-color:var(--red)}
+
+@media(max-width:900px){.dep-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  header{padding:0 14px}.bal{display:none}.brand{font-size:16px}
+  main{padding:18px 14px}nav{padding:0 14px}
+  .hero{padding:36px 20px;border-radius:20px}.hero-title{font-size:32px}
+  .hero-avatar-wrap{width:110px;height:110px}.hero-avatar{font-size:38px}
+  .social-btn{width:48px;height:48px;font-size:22px;border-radius:14px}
+  h2.title{font-size:17px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+  .card{padding:14px}.card h3{font-size:14px}.card .price{font-size:18px}.card img{height:120px}
+  .qr-wrap img{width:200px}
+  #toast{right:14px;left:14px;bottom:14px;max-width:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><div>Đang kết nối...</div></div>
+<div id="toast"></div>
+
+<div id="auth">
+  <div class="auth-box">
+    <div class="auth-logo"><span id="authLogo">TRỌNG STORE</span></div>
+    <div class="auth-sub">Proxy game chuyên dụng • Giao key tức thì</div>
+    <div class="tabs">
+      <button id="tbLogin" class="on" onclick="switchAuth('login')">Đăng nhập</button>
+      <button id="tbReg" onclick="switchAuth('reg')">Đăng ký</button>
+    </div>
+    <div id="formLogin">
+      <div class="field"><input id="lu" placeholder="Tên đăng nhập"></div>
+      <div class="field"><input id="lp" type="password" placeholder="Mật khẩu"></div>
+      <button class="btn-main" id="btnLogin" onclick="doLogin()">Đăng nhập ngay →</button>
+      <div class="auth-note">Chưa có tài khoản? <b onclick="switchAuth('reg')">Đăng ký</b></div>
+    </div>
+    <div id="formReg" style="display:none">
+      <div class="field"><input id="ru" placeholder="Tên đăng nhập" maxlength="20"></div>
+      <div class="field"><input id="re" type="email" placeholder="Email Gmail (phải @gmail.com)"></div>
+      <div class="field"><input id="rp" type="password" placeholder="Mật khẩu (tối thiểu 6 ký tự)"></div>
+      <div class="field"><input id="rp2" type="password" placeholder="Nhập lại mật khẩu"></div>
+      <button class="btn-main" id="btnReg" onclick="doRegister()">Tạo tài khoản →</button>
+      <div class="auth-note">Đã có tài khoản? <b onclick="switchAuth('login')">Đăng nhập</b></div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand" onclick="tab('home')">
+      <span class="dot"></span><span id="brandName">TRỌNG STORE</span>
+      <span class="admin-badge" id="adminBadge" style="display:none">ADMIN</span>
+    </div>
+    <div class="user">
+      <div class="bal" id="balDisplay">0đ</div>
+      <div class="avatar" id="avatar">T</div>
+      <button class="btn-admin" id="btnAdminPanel" style="display:none" onclick="tab('admin')">🎛️ Admin</button>
+      <button class="btn-out" onclick="logout()">Đăng xuất</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="on" data-t="home" onclick="tab('home')">🏠 Trang chủ</button>
+    <button data-t="deposit" onclick="tab('deposit')">💳 Nạp tiền</button>
+    <button data-t="orders" onclick="tab('orders')">📦 Đơn hàng</button>
+    <button data-t="dep" onclick="tab('dep')">📜 Lịch sử nạp</button>
+    <button data-t="buy" onclick="tab('buy')">🛒 Lịch sử mua</button>
+    <button data-t="admin" id="navAdmin" style="display:none;color:var(--red)" onclick="tab('admin')">🎛️ Admin <span class="pending-badge" id="pendBadge" style="display:none">0</span></button>
+  </nav>
+
+  <main>
+    <div class="tab on" id="t-home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-avatar-wrap">
+            <div class="hero-avatar-ring"></div>
+            <div class="hero-avatar" id="heroAvatar">S</div>
+            <div class="hero-star s1">✨</div><div class="hero-star s2">⭐</div>
+            <div class="hero-star s3">💫</div><div class="hero-star s4">✨</div>
+          </div>
+          <div class="hero-welcome">Welcome to</div>
+          <div class="hero-title" id="heroTitle">Trọng Store</div>
+          <div class="hero-slogan">
+            UY TÍN - CHẤT LƯỢNG - GIÁ RẺ - HỖ TRỢ CẢI A-Z<br>
+            LUÔN ĐẶT UY TÍN LÊN ĐẦU HÀNG
+          </div>
+          <div class="hero-socials">
+            <a href="https://facebook.com" target="_blank" class="social-btn">📘</a>
+            <a href="https://tiktok.com" target="_blank" class="social-btn">🎵</a>
+            <a href="https://t.me" target="_blank" class="social-btn">✈️</a>
+            <a href="https://zalo.me/0355757211" target="_blank" class="social-btn">💬</a>
+          </div>
+          <div class="video-frame">
+            <div class="video-head"><div class="icon">▶</div><h3>VIDEO GIỚI THIỆU</h3></div>
+            <div class="video-body"><div class="video-placeholder"><div class="play">▶️</div>Video giới thiệu shop</div></div>
+          </div>
+        </div>
+      </div>
+      <h2 class="title">🔥 Sản phẩm nổi bật <span>Đủ tiền mới mua được</span></h2>
+      <div class="grid" id="productGrid"></div>
+    </div>
+
+    <div class="tab" id="t-deposit">
+      <h2 class="title">💳 Nạp tiền vào ví <span>Quét QR → chờ admin duyệt</span></h2>
+      <div class="dep-grid">
+        <div class="dep-box">
+          <h3>📱 Quét mã QR</h3>
+          <div class="qr-wrap">
+            <img id="qrImg" src="https://files.catbox.moe/oi1pi7.jpeg" alt="QR" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=NAPTIEN'">
+            <div class="qr-note">Quét bằng app ngân hàng / Momo</div>
+          </div>
+          <div class="bank-info">
+            <div class="row"><span>Chủ TK</span><b id="bankName">TRỌNG STORE</b></div>
+            <div class="row"><span>SĐT</span><b>0355757211</b></div>
+            <div class="row"><span>Nội dung</span><b id="ckContent">NAP user</b></div>
+          </div>
+        </div>
+        <div class="dep-box">
+          <h3>💰 Chọn số tiền</h3>
+          <div class="amount-options" id="amountOptions">
+            <button onclick="pickAmount(20000,this)">20K</button>
+            <button onclick="pickAmount(50000,this)">50K</button>
+            <button onclick="pickAmount(100000,this)">100K</button>
+            <button onclick="pickAmount(200000,this)">200K</button>
+            <button onclick="pickAmount(500000,this)">500K</button>
+            <button onclick="pickAmount(1000000,this)">1TR</button>
+          </div>
+          <div class="custom-amount"><input id="customAmt" type="number" placeholder="Hoặc nhập số tiền tùy chọn..." min="10000"></div>
+          <button class="btn-confirm" onclick="confirmDeposit()">📤 Tôi đã chuyển khoản</button>
+          <div class="qr-note" style="margin-top:14px;text-align:center;color:#d97706;font-weight:600">
+            ⏳ Sau khi gửi, chờ admin duyệt — tiền sẽ được cộng vào ví.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab" id="t-orders"><h2 class="title">📦 Đơn hàng của bạn</h2><div class="table-wrap" id="ordersWrap"></div></div>
+    <div class="tab" id="t-dep"><h2 class="title">📜 Lịch sử nạp tiền</h2><div class="table-wrap" id="depWrap"></div></div>
+    <div class="tab" id="t-buy"><h2 class="title">🛒 Lịch sử mua hàng</h2><div class="table-wrap" id="buyWrap"></div></div>
+
+    <div class="tab" id="t-admin">
+      <div class="admin-header">
+        <h2>🎛️ ADMIN PANEL</h2>
+        <div class="warn">Chỉ tài khoản <b>vantrongios</b> mới truy cập được</div>
+      </div>
+      <div class="admin-section">
+        <h3>💰 Yêu cầu nạp tiền đang chờ duyệt</h3>
+        <div class="table-wrap" id="pendingWrap"></div>
+      </div>
+      <div class="admin-section">
+        <h3>➕ Thêm sản phẩm mới</h3>
+        <div class="admin-grid">
+          <input id="pName" placeholder="Tên sản phẩm">
+          <input id="pPrice" type="number" placeholder="Giá VNĐ">
+          <input id="pStock" type="number" placeholder="Số lượng" value="100" min="0">
+          <input id="pTag" placeholder="Nhãn (HOT, VIP...)">
+          <input id="pLink" class="full" placeholder="Link HTTP (tùy chọn)">
+          <textarea id="pDesc" placeholder="Mô tả sản phẩm..."></textarea>
+          <label class="upload-box" for="pImgFile">
+            <input type="file" id="pImgFile" accept="image/*" onchange="previewImg(event)">
+            <div class="up-icon">📁</div>
+            <div class="up-txt">Bấm để <b>chọn ảnh từ máy</b></div>
+          </label>
+          <div class="img-preview"><img id="imgPreview" alt="preview"></div>
+        </div>
+        <button class="btn-add" onclick="addProduct()">➕ Thêm sản phẩm</button>
+      </div>
+      <div class="admin-section">
+        <h3>📦 Danh sách sản phẩm</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Ảnh</th><th>Tên SP</th><th>Giá</th><th>Kho</th><th>Cập nhật</th><th>Hành động</th></tr>
+            <tbody id="adminProductTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, update, remove, onValue }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBY-jJwNo5H6MB31z-JfI1S5oozpjEZlyo",
+  authDomain: "trong-store.firebaseapp.com",
+  databaseURL: "https://trong-store-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "trong-store",
+  storageBucket: "trong-store.firebasestorage.app",
+  messagingSenderId: "444772818915",
+  appId: "1:444772818915:web:7b630136bb26bb0a374ad6"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
+
+const ADMIN_USER = "vantrongios";
+const ADMIN_PASS = "vantrongios123";
+const SHOP_NAME = "TRỌNG STORE";
+const BANK_NAME = "TRỌNG STORE";
+const QR_IMAGE = "https://files.catbox.moe/oi1pi7.jpeg";
+
+const DEFAULT_PRODUCTS = [
+  {id:1,tag:'PHỔ BIẾN',name:'Proxy Game 1 Ngày',desc:'Proxy chuyên dụng, kết nối ổn định, hỗ trợ kéo tâm.',price:20000,stock:999,img:'',link:''},
+  {id:2,tag:'TIẾT KIỆM',name:'Proxy Game 7 Ngày',desc:'Gói tuần tiết kiệm, giao key tức thì, hỗ trợ 24/7.',price:100000,stock:500,img:'',link:''},
+  {id:3,tag:'VIP',name:'Proxy Game 30 Ngày',desc:'Gói tháng VIP, hạ tầng chuyên dụng, bảo hành full.',price:350000,stock:200,img:'',link:''},
+  {id:4,tag:'TRỌN ĐỜI',name:'Key VIP Trọn Đời',desc:'Không giới hạn, ưu tiên hỗ trợ, kết nối full.',price:1200000,stock:50,img:'',link:''}
+];
+
+document.title = SHOP_NAME;
+document.getElementById('brandName').textContent = SHOP_NAME;
+document.getElementById('authLogo').textContent = SHOP_NAME;
+document.getElementById('bankName').textContent = BANK_NAME;
+document.getElementById('heroTitle').textContent = SHOP_NAME;
+document.getElementById('qrImg').src = QR_IMAGE;
+
+let currentUser = null;
+let users = {};
+let products = {};
+let pendingDeps = {};
+
+function money(n){ return (n||0).toLocaleString('vi-VN') + 'đ'; }
+function isAdmin(){ return currentUser === ADMIN_USER; }
+
+function toast(msg, type){
+  type = type || '';
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function init(){
+  const prodSnap = await get(ref(db, 'products'));
+  if(!prodSnap.exists()){
+    const obj = {};
+    DEFAULT_PRODUCTS.forEach(p => { obj[p.id] = p; });
+    await set(ref(db, 'products'), obj);
+  }
+  const adminSnap = await get(ref(db, 'users/' + ADMIN_USER));
+  if(!adminSnap.exists()){
+    await set(ref(db, 'users/' + ADMIN_USER), {
+      pass: ADMIN_PASS, email: ADMIN_USER + '@gmail.com',
+      balance: 0, isAdmin: true, orders: {}, deposits: {}, purchases: {}
+    });
+  }
+
+  onValue(ref(db, 'users'), snap => { users = snap.val() || {}; afterData(); });
+  onValue(ref(db, 'products'), snap => { products = snap.val() || {}; afterData(); });
+  onValue(ref(db, 'pending'), snap => { pendingDeps = snap.val() || {}; afterData(); });
+
+  const saved = localStorage.getItem('shop_session');
+  if(saved) { currentUser = saved; showApp(); }
+
+  setTimeout(() => document.getElementById('loading').classList.add('hide'), 800);
+}
+
+function afterData(){
+  if(currentUser && users[currentUser]){
+    document.getElementById('balDisplay').textContent = money(users[currentUser].balance);
+    renderProducts(); renderOrders(); renderDep(); renderBuy();
+    if(isAdmin()) renderAdmin();
+  }
+  if(currentUser) updatePendingBadge();
+}
+
+window.switchAuth = function(m){
+  const isLogin = m === 'login';
+  document.getElementById('tbLogin').classList.toggle('on', isLogin);
+  document.getElementById('tbReg').classList.toggle('on', !isLogin);
+  document.getElementById('formLogin').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('formReg').style.display = isLogin ? 'none' : 'block';
+};
+
+function isValidGmail(e){ return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(e); }
+function normU(u){ return u.trim().toLowerCase(); }
+
+window.doLogin = async function(){
+  const u = normU(document.getElementById('lu').value);
+  const p = document.getElementById('lp').value.trim();
+  if(!u || !p) return toast('Nhập đầy đủ thông tin!','err');
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  try {
+    const snap = await get(ref(db, 'users/' + u));
+    if(!snap.exists()){ toast('Tài khoản không tồn tại!','err'); }
+    else if(snap.val().pass !== p){ toast('Sai mật khẩu!','err'); }
+    else {
+      currentUser = u;
+      localStorage.setItem('shop_session', u);
+      showApp();
+      toast('Chào mừng ' + u + ' 🎉','ok');
+    }
+  } catch(e){ toast('Lỗi kết nối!','err'); }
+  btn.disabled = false; btn.textContent = 'Đăng nhập ngay →';
+};
+
+window.doRegister = async function(){
+  const u = normU(document.getElementById('ru').value);
+  const e = document.getElementById('re').value.trim().toLowerCase();
+  const p = document.getElementById('rp').value;
+  const p2 = document.getElementById('rp2').value;
+  if(!u || !e || !p || !p2) return toast('Nhập đầy đủ thông tin!','err');
+  if(!/^[a-z0-9_]{3,20}$/.test(u)) return toast('Tên chỉ 3-20 ký tự: a-z, 0-9, _','err');
+  if(u === ADMIN_USER) return toast('❌ Tên này đã được bảo vệ!','err');
+  if(!isValidGmail(e)) return toast('❌ Email phải là @gmail.com!','err');
+  if(p.length < 6) return toast('Mật khẩu từ 6 ký tự!','err');
+  if(p !== p2) return toast('Mật khẩu không khớp!','err');
+
+  const btn = document.getElementById('btnReg');
+  btn.disabled = true; btn.textContent = 'Đang tạo...';
+  try {
+    const snap = await get(ref(db, 'users/' + u));
+    if(snap.exists()){ toast('❌ Tên đã tồn tại!','err'); }
+    else {
+      let dup = false;
+      for(const k in users){ if(users[k].email === e){ dup = true; break; } }
+      if(dup){ toast('❌ Email đã được dùng!','err'); }
+      else {
+        await set(ref(db, 'users/' + u), {
+          pass: p, email: e, balance: 0, orders: {}, deposits: {}, purchases: {}
+        });
+        currentUser = u;
+        localStorage.setItem('shop_session', u);
+        showApp();
+        toast('✅ Đăng ký thành công!','ok');
+      }
+    }
+  } catch(err){ toast('Lỗi kết nối!','err'); }
+  btn.disabled = false; btn.textContent = 'Tạo tài khoản →';
+};
+
+window.logout = function(){
+  currentUser = null;
+  localStorage.removeItem('shop_session');
+  document.getElementById('auth').classList.remove('hide');
+  document.getElementById('app').classList.remove('show');
+  ['lu','lp','ru','re','rp','rp2'].forEach(id => document.getElementById(id).value = '');
+  switchAuth('login'); tab('home');
+};
+
+function showApp(){
+  document.getElementById('auth').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  document.getElementById('avatar').textContent = currentUser.charAt(0).toUpperCase();
+  document.getElementById('heroAvatar').textContent = currentUser.charAt(0).toUpperCase();
+  document.getElementById('balDisplay').textContent = money(users[currentUser] ? users[currentUser].balance : 0);
+  document.getElementById('ckContent').textContent = 'NAP ' + currentUser;
+
+  const admin = isAdmin();
+  document.getElementById('adminBadge').style.display = admin ? 'inline-block' : 'none';
+  document.getElementById('btnAdminPanel').style.display = admin ? 'inline-block' : 'none';
+  document.getElementById('navAdmin').style.display = admin ? 'flex' : 'none';
+
+  renderProducts(); renderOrders(); renderDep(); renderBuy();
+  if(admin) renderAdmin();
+}
+
+let pickedAmount = 0;
+window.pickAmount = function(a, btn){
+  pickedAmount = a;
+  document.getElementById('customAmt').value = '';
+  document.querySelectorAll('#amountOptions button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+};
+
+window.confirmDeposit = async function(){
+  const custom = parseInt(document.getElementById('customAmt').value);
+  const amount = custom > 0 ? custom : pickedAmount;
+  if(!amount || amount < 10000) return toast('Tối thiểu 10.000đ!','err');
+  const u = users[currentUser];
+  const cnt = u.deposits ? Object.keys(u.deposits).length : 0;
+  const code = '#DEP' + String(cnt + 1).padStart(3,'0');
+  const now = new Date().toLocaleString('vi-VN');
+  try {
+    await set(ref(db, 'pending/' + code), {code, user:currentUser, amount, time:now});
+    await update(ref(db, 'users/' + currentUser + '/deposits/' + code), {
+      code, method:'QR chuyển khoản', amount, time:now, status:'wait'
+    });
+    pickedAmount = 0;
+    document.getElementById('customAmt').value = '';
+    document.querySelectorAll('#amountOptions button').forEach(b => b.classList.remove('on'));
+    toast('📤 Đã gửi yêu cầu nạp ' + money(amount) + '. Chờ admin duyệt!','ok');
+  } catch(e){ toast('Lỗi!','err'); }
+};
+
+window.buy = async function(id){
+  if(!currentUser) return;
+  const p = products[id]; if(!p) return;
+  const u = users[currentUser];
+  if(p.stock <= 0) return toast('Sản phẩm đã hết hàng!','err');
+  if(u.balance < p.price){
+    toast('Số dư không đủ! Cần thêm ' + money(p.price - u.balance),'err');
+    setTimeout(() => tab('deposit'), 700); return;
+  }
+  const now = new Date().toLocaleString('vi-VN');
+  const key = 'KEY-' + Math.random().toString(36).slice(2,10).toUpperCase();
+  const pc = '#PUR' + String((u.purchases ? Object.keys(u.purchases).length : 0) + 1).padStart(3,'0');
+  const oc = '#ORD' + String((u.orders ? Object.keys(u.orders).length : 0) + 1).padStart(3,'0');
+  try {
+    await update(ref(db, 'users/' + currentUser), {
+      balance: u.balance - p.price,
+      ['purchases/' + pc]: {code:pc, name:p.name, price:p.price, time:now, key, link:p.link||''},
+      ['orders/' + oc]: {code:oc, name:p.name, price:p.price, date:now.split(' ')[0]}
+    });
+    await update(ref(db, 'products/' + id), {stock: p.stock - 1});
+    toast('✅ Mua thành công! Key: ' + key,'ok');
+    setTimeout(() => tab('buy'), 900);
+  } catch(e){ toast('Lỗi!','err'); }
+};
+
+window.approveDeposit = async function(code){
+  const d = pendingDeps[code]; if(!d) return;
+  const u = users[d.user]; if(!u) return;
+  try {
+    await update(ref(db, 'users/' + d.user), {balance: (u.balance||0) + d.amount});
+    await update(ref(db, 'users/' + d.user + '/deposits/' + code), {status:'ok'});
+    await remove(ref(db, 'pending/' + code));
+    toast('✅ Đã duyệt ' + money(d.amount) + ' cho ' + d.user,'ok');
+  } catch(e){ toast('Lỗi!','err'); }
+};
+
+window.rejectDeposit = async function(code){
+  const d = pendingDeps[code]; if(!d) return;
+  if(!confirm('Từ chối yêu cầu ' + code + '?')) return;
+  try {
+    await update(ref(db, 'users/' + d.user + '/deposits/' + code), {status:'fail'});
+    await remove(ref(db, 'pending/' + code));
+    toast('❌ Đã từ chối ' + code,'err');
+  } catch(e){ toast('Lỗi!','err'); }
+};
+
+function updatePendingBadge(){
+  const n = Object.keys(pendingDeps).length;
+  const b = document.getElementById('pendBadge');
+  if(n > 0){ b.style.display = 'inline-block'; b.textContent = n; }
+  else b.style.display = 'none';
+}
+
+let currentImgData = '';
+window.previewImg = function(e){
+  const f = e.target.files[0]; if(!f) return;
+  if(f.size > 2*1024*1024){ toast('Ảnh quá lớn (tối đa 2MB)!','err'); e.target.value = ''; return; }
+  const r = new FileReader();
+  r.onload = ev => {
+    currentImgData = ev.target.result;
+    const pv = document.getElementById('imgPreview');
+    pv.src = currentImgData; pv.style.display = 'inline-block';
+  };
+  r.readAsDataURL(f);
+};
+
+window.addProduct = async function(){
+  const name = document.getElementById('pName').value.trim();
+  const price = parseInt(document.getElementById('pPrice').value);
+  const stock = parseInt(document.getElementById('pStock').value) || 0;
+  const tag = document.getElementById('pTag').value.trim() || 'MỚI';
+  const link = document.getElementById('pLink').value.trim();
+  const desc = document.getElementById('pDesc').value.trim() || 'Sản phẩm chất lượng cao.';
+  if(!name) return toast('Nhập tên sản phẩm!','err');
+  if(!price || price < 0) return toast('Nhập giá hợp lệ!','err');
+  let maxId = 0;
+  for(const k in products){ if(products[k].id > maxId) maxId = products[k].id; }
+  try {
+    await set(ref(db, 'products/' + (maxId+1)), {
+      id:maxId+1, tag, name, desc, price, stock, img:currentImgData, link
+    });
+    ['pName','pPrice','pTag','pImgFile','pLink','pDesc'].forEach(x => document.getElementById(x).value = '');
+    document.getElementById('pStock').value = '100';
+    currentImgData = '';
+    document.getElementById('imgPreview').style.display = 'none';
+    toast('✅ Đã thêm: ' + name,'ok');
+  } catch(e){ toast('Lỗi!','err'); }
+};
+
+window.deleteProduct = async function(id){
+  if(!confirm('Xóa sản phẩm này?')) return;
+  try { await remove(ref(db, 'products/' + id)); toast('🗑️ Đã xóa','ok'); }
+  catch(e){ toast('Lỗi!','err'); }
+};
+
+window.setStock = async function(id){
+  const input = document.getElementById('stock_' + id); if(!input) return;
+  const val = parseInt(input.value);
+  if(isNaN(val) || val < 0) return toast('Số lượng không hợp lệ!','err');
+  try { await update(ref(db, 'products/' + id), {stock: val}); toast('✅ Đã cập nhật kho: ' + val,'ok'); }
+  catch(e){ toast('Lỗi!','err'); }
+};
+
+function renderProducts(){
+  if(!currentUser) return;
+  const u = users[currentUser];
+  const arr = Object.values(products).sort((a,b) => a.id - b.id);
+  let html = '';
+  arr.forEach(p => {
+    const can = u.balance >= p.price;
+    const cls = p.stock <= 0 ? 'out' : (p.stock < 50 ? 'low' : '');
+    const txt = p.stock <= 0 ? 'Hết hàng' : (p.stock < 50 ? 'Còn ' + p.stock + ' — sắp hết' : 'Còn ' + p.stock);
+    html += '<div class="card">';
+    if(p.img) html += '<img src="' + p.img + '" onerror="this.style.display=\'none\'">';
+    html += '<div class="tag">' + p.tag + '</div>';
+    html += '<h3>' + p.name + '</h3>';
+    html += '<p>' + p.desc + '</p>';
+    html += '<div class="price">' + money(p.price) + '</div>';
+    html += '<div class="stock ' + cls + '">' + txt + '</div>';
+    html += '<button class="buy" ' + ((!can || p.stock <= 0) ? 'disabled' : '') + ' onclick="buy(' + p.id + ')">Mua ngay</button>';
+    html += '</div>';
+  });
+  document.getElementById('productGrid').innerHTML = html;
+}
+
+function renderAdmin(){
+  const pw = document.getElementById('pendingWrap');
+  const arr = Object.values(pendingDeps);
+  if(!arr.length){ pw.innerHTML = '<div class="empty">📭 Không có yêu cầu nào đang chờ</div>'; }
+  else {
+    let html = '<table><tr><th>Mã</th><th>User</th><th>Số tiền</th><th>Thời gian</th><th>Hành động</th></tr>';
+    arr.forEach(d => {
+      html += '<tr><td>' + d.code + '</td><td><b style="color:var(--primary)">' + d.user + '</b></td>';
+      html += '<td style="color:var(--gold);font-weight:800">+' + money(d.amount) + '</td><td>' + d.time + '</td>';
+      html += '<td><button class="btn-approve" onclick="approveDeposit(\'' + d.code + '\')">✓ Duyệt</button>';
+      html += '<button class="btn-reject" onclick="rejectDeposit(\'' + d.code + '\')">✗ Từ chối</button></td></tr>';
+    });
+    pw.innerHTML = html + '</table>';
+  }
+  const ap = document.getElementById('adminProductTable');
+  const parr = Object.values(products).sort((a,b) => a.id - b.id);
+  let h2 = '';
+  parr.forEach(p => {
+    h2 += '<tr>';
+    h2 += '<td>' + (p.img ? '<img src="' + p.img + '" style="width:44px;height:44px;border-radius:8px;object-fit:cover">' : '—') + '</td>';
+    h2 += '<td><b>' + p.name + '</b><br><span style="font-size:11.5px;color:var(--muted)">' + p.tag + '</span></td>';
+    h2 += '<td style="color:var(--accent2);font-weight:800">' + money(p.price) + '</td>';
+    h2 += '<td><b style="color:var(--green);font-size:15px">' + p.stock + '</b></td>';
+    h2 += '<td><input type="number" id="stock_' + p.id + '" value="' + p.stock + '" min="0" style="width:80px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit"> ';
+    h2 += '<button class="btn-approve" onclick="setStock(' + p.id + ')" style="padding:7px 11px">💾 Lưu</button></td>';
+    h2 += '<td><button class="btn-reject" onclick="deleteProduct(' + p.id + ')">🗑️ Xóa</button></td>';
+    h2 += '</tr>';
+  });
+  ap.innerHTML = h2 || '<tr><td colspan="6" class="empty">Chưa có sản phẩm nào</td></tr>';
+  updatePendingBadge();
+}
+
+function renderOrders(){
+  const u = users[currentUser], w = document.getElementById('ordersWrap');
+  const arr = u.orders ? Object.values(u.orders).reverse() : [];
+  if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có đơn hàng</div>'; return; }
+  let html = '<table><tr><th>Mã đơn</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày</th><th>Trạng thái</th></tr>';
+  arr.forEach(o => {
+    html += '<tr><td>' + o.code + '</td><td>' + o.name + '</td><td>' + money(o.price) + '</td><td>' + o.date + '</td><td><span class="s ok">Hoàn thành</span></td></tr>';
+  });
+  w.innerHTML = html + '</table>';
+}
+
+function renderDep(){
+  const u = users[currentUser], w = document.getElementById('depWrap');
+  const arr = u.deposits ? Object.values(u.deposits).reverse() : [];
+  if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử nạp</div>'; return; }
+  let html = '<table><tr><th>Mã GD</th><th>Phương thức</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th></tr>';
+  arr.forEach(d => {
+    const txt = d.status === 'ok' ? 'Thành công' : (d.status === 'wait' ? 'Chờ duyệt' : 'Thất bại');
+    html += '<tr><td>' + d.code + '</td><td>' + d.method + '</td><td>+' + money(d.amount) + '</td><td>' + d.time + '</td><td><span class="s ' + d.status + '">' + txt + '</span></td></tr>';
+  });
+  w.innerHTML = html + '</table>';
+}
+
+function renderBuy(){
+  const u = users[currentUser], w = document.getElementById('buyWrap');
+  const arr = u.purchases ? Object.values(u.purchases).reverse() : [];
+  if(!arr.length){ w.innerHTML = '<div class="empty">📭 Chưa có lịch sử mua</div>'; return; }
+  let html = '<table><tr><th>Mã</th><th>Sản phẩm</th><th>Số tiền</th><th>Thời gian</th><th>Key</th></tr>';
+  arr.forEach(p => {
+    html += '<tr><td>' + p.code + '</td><td>' + p.name + '</td><td>' + money(p.price) + '</td><td>' + p.time + '</td><td style="color:var(--gold);font-family:monospace;font-weight:700">' + p.key + '</td></tr>';
+  });
+  w.innerHTML = html + '</table>';
+}
+
+window.tab = function(n){
+  document.querySelectorAll('.tab').forEach(e => e.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t === n));
+  const el = document.getElementById('t-' + n);
+  if(el) el.classList.add('on');
+  if(n === 'admin' && isAdmin()) renderAdmin();
+};
+
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter' || document.getElementById('auth').classList.contains('hide')) return;
+  if(document.getElementById('formLogin').style.display !== 'none') doLogin();
+  else doRegister();
+});
+
+init();
+</script>
+</body>
+</html>
